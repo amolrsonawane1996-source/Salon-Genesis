@@ -1,0 +1,26 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "RBbpEcYEOPfD00vl8lrYF"
+uri = "file://artifacts/mobile/assets/images/icon.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "WWNdiSS-l07ZMw-rn8t4r"
+uri = "file://artifacts/mobile/assets/images/salon1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "tuqzbLmUlsXXJ1Js_3-ec"
+uri = "file://artifacts/mobile/assets/images/salon2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "0W3bv5Yzxwu339V0rkjB5"
+uri = "file://artifacts/mobile/assets/images/salon3.png"
+type = "image"
+title = "generated_image"
