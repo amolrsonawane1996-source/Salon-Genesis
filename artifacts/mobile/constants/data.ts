@@ -5,6 +5,9 @@ export type Salon = {
   name: string;
   city: string;
   state: string;
+  address: string;
+  lat: number;
+  lng: number;
   rating: number;
   reviewCount: number;
   description: string;
@@ -36,6 +39,9 @@ export const SALONS: Salon[] = [
     name: "Royal Salon",
     city: "Nashik",
     state: "Maharashtra",
+    address: "CBS Road, Nashik, Maharashtra 422001",
+    lat: 19.9975,
+    lng: 73.7898,
     rating: 4.8,
     reviewCount: 124,
     description: "Premium hair salon with modern styling services and experienced professionals. We use only top-grade products for your hair and skin.",
@@ -60,6 +66,9 @@ export const SALONS: Salon[] = [
     name: "Style King Salon",
     city: "Mumbai",
     state: "Maharashtra",
+    address: "Linking Road, Bandra West, Mumbai 400050",
+    lat: 19.0596,
+    lng: 72.8295,
     rating: 4.7,
     reviewCount: 98,
     description: "Mumbai's most stylish salon offering premium grooming services. Our experts stay updated with the latest trends.",
@@ -84,6 +93,9 @@ export const SALONS: Salon[] = [
     name: "Luxury Hair Studio",
     city: "Pune",
     state: "Maharashtra",
+    address: "FC Road, Shivajinagar, Pune 411005",
+    lat: 18.5204,
+    lng: 73.8567,
     rating: 4.9,
     reviewCount: 215,
     description: "Pune's premier luxury hair studio. Experience world-class hair treatments with our certified stylists.",
@@ -108,6 +120,9 @@ export const SALONS: Salon[] = [
     name: "Glamour Studio",
     city: "Nagpur",
     state: "Maharashtra",
+    address: "Sitabuldi, Nagpur, Maharashtra 440012",
+    lat: 21.1458,
+    lng: 79.0882,
     rating: 4.6,
     reviewCount: 87,
     description: "Nagpur's leading beauty destination offering complete grooming and beauty solutions for men and women.",
@@ -129,8 +144,11 @@ export const SALONS: Salon[] = [
   {
     id: "5",
     name: "Elite Cuts",
-    city: "Aurangabad",
+    city: "Chhatrapati Sambhajinagar",
     state: "Maharashtra",
+    address: "Osmanpura, Chhatrapati Sambhajinagar, Maharashtra 431005",
+    lat: 19.8762,
+    lng: 75.3433,
     rating: 4.5,
     reviewCount: 63,
     description: "Modern barber shop with a vintage touch. Specializing in classic and contemporary men's grooming.",
@@ -145,7 +163,7 @@ export const SALONS: Salon[] = [
       { name: "Scalp Treatment", price: 600 },
     ],
     reviews: [
-      { name: "Mahesh L.", comment: "Best barber in Aurangabad! Always consistent.", rating: 5 },
+      { name: "Mahesh L.", comment: "Best barber in town! Always consistent.", rating: 5 },
       { name: "Dinesh V.", comment: "Love the vintage vibe. Great haircuts!", rating: 4 },
     ],
   },

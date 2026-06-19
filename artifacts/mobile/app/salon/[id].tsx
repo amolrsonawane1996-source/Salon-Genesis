@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -91,15 +92,35 @@ export default function SalonDetailScreen() {
           <View style={styles.contactRow}>
             <Pressable
               style={[styles.contactBtn, { backgroundColor: "#25D366" }]}
+              onPress={() => Linking.openURL(`https://wa.me/${salon.phone.replace(/\D/g, "")}`)}
             >
               <Feather name="message-circle" size={16} color="#FFFFFF" />
               <Text style={[styles.contactBtnText, { color: "#FFFFFF" }]}>WhatsApp</Text>
             </Pressable>
             <Pressable
               style={[styles.contactBtn, { backgroundColor: colors.muted }]}
+              onPress={() => Linking.openURL(`tel:${salon.phone}`)}
             >
               <Feather name="phone" size={16} color={colors.foreground} />
               <Text style={[styles.contactBtnText, { color: colors.foreground }]}>Call</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.contactBtn, { backgroundColor: "#111111" }]}
+              onPress={() => {
+                const label = encodeURIComponent(salon.name);
+                const url =
+                  Platform.OS === "ios"
+                    ? `maps://?q=${label}&ll=${salon.lat},${salon.lng}`
+                    : `geo:${salon.lat},${salon.lng}?q=${label}`;
+                Linking.openURL(url).catch(() =>
+                  Linking.openURL(
+                    `https://www.google.com/maps/search/?api=1&query=${salon.lat},${salon.lng}`
+                  )
+                );
+              }}
+            >
+              <Feather name="navigation" size={16} color="#F5B041" />
+              <Text style={[styles.contactBtnText, { color: "#F5B041" }]}>Directions</Text>
             </Pressable>
           </View>
         </View>

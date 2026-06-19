@@ -20,6 +20,10 @@ function NativeTabLayout() {
         <Icon sf={{ default: "scissors", selected: "scissors.fill" }} />
         <Label>Salons</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="map">
+        <Icon sf={{ default: "map", selected: "map.fill" }} />
+        <Label>Map</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="bookings">
         <Icon sf={{ default: "calendar", selected: "calendar.fill" }} />
         <Label>Bookings</Label>
@@ -91,6 +95,18 @@ function ClassicTabLayout() {
               <SymbolView name="scissors" tintColor={color} size={22} />
             ) : (
               <Feather name="scissors" size={22} color={color} />
+            ),
+        }}
+      />
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: "Map",
+          tabBarIcon: ({ color }) =>
+            isIOS ? (
+              <SymbolView name="map" tintColor={color} size={22} />
+            ) : (
+              <Feather name="map" size={22} color={color} />
             ),
         }}
       />
