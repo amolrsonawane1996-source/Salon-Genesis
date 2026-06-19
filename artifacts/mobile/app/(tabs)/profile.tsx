@@ -47,7 +47,9 @@ export default function ProfileScreen() {
         <View style={[styles.avatarPlaceholder, { backgroundColor: "#111111" }]}>
           <Feather name="user" size={40} color="#F5B041" />
         </View>
-        <Text style={[styles.guestTitle, { color: colors.foreground }]}>Join Next Generation Salon</Text>
+        <Text style={[styles.guestTitle, { color: colors.foreground }]}>
+          Join Next Generation Salon
+        </Text>
         <Text style={[styles.guestText, { color: colors.mutedForeground }]}>
           Sign in to book appointments, view your history, and manage your profile
         </Text>
@@ -75,39 +77,53 @@ export default function ProfileScreen() {
     .filter((b) => b.status === "Completed")
     .reduce((sum, b) => sum + b.servicePrice, 0);
 
-  const ROLE_LABELS: Record<string, { label: string; color: string }> = {
-    customer: { label: "Customer", color: "#2196F3" },
-    owner: { label: "Salon Owner", color: "#F5B041" },
-    admin: { label: "Admin", color: "#DC3545" },
+  const ROLE_META: Record<string, { label: string; color: string; icon: string }> = {
+    customer: { label: "Customer", color: "#2196F3", icon: "user" },
+    owner: { label: "Salon Owner", color: "#F5B041", icon: "scissors" },
+    admin: { label: "Admin", color: "#DC3545", icon: "shield" },
   };
-
-  const roleMeta = ROLE_LABELS[user.role] || { label: user.role, color: colors.primary };
+  const roleMeta = ROLE_META[user.role] ?? { label: user.role, color: colors.primary, icon: "user" };
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
+
+        {/* ─── Hero ─────────────────────────────────────────────────── */}
         <View
           style={[
             styles.hero,
-            {
-              backgroundColor: "#111111",
-              paddingTop: (Platform.OS === "web" ? 67 : insets.top) + 20,
-            },
+            { backgroundColor: "#111111", paddingTop: (Platform.OS === "web" ? 67 : insets.top) + 20 },
           ]}
         >
           <View style={styles.avatarRow}>
-            <View style={[styles.avatar, { backgroundColor: "#F5B041" }]}>
+            <View style={[styles.avatar, { backgroundColor: roleMeta.color }]}>
               <Text style={styles.avatarInitial}>{user.name.charAt(0).toUpperCase()}</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.userName}>{user.name}</Text>
               <Text style={styles.userEmail}>{user.email}</Text>
               <View style={[styles.roleBadge, { backgroundColor: roleMeta.color + "30" }]}>
+                <Feather name={roleMeta.icon as any} size={10} color={roleMeta.color} />
                 <Text style={[styles.roleText, { color: roleMeta.color }]}>{roleMeta.label}</Text>
               </View>
             </View>
+
+            {/* Edit button */}
+            <Pressable
+              style={styles.editBtn}
+              onPress={() => router.push("/edit-profile")}
+            >
+              <Feather name="edit-2" size={14} color="#F5B041" />
+              <Text style={styles.editBtnText}>Edit</Text>
+            </Pressable>
           </View>
 
+          {/* Bio */}
+          {user.bio ? (
+            <Text style={styles.bio}>{user.bio}</Text>
+          ) : null}
+
+          {/* Stats */}
           <View style={styles.statsRow}>
             <StatBlock value={confirmed} label="Upcoming" />
             <View style={[styles.statDivider, { backgroundColor: "rgba(255,255,255,0.15)" }]} />
@@ -118,29 +134,124 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.content}>
+
+          {/* ─── Role-specific tools ─────────────────────────────────── */}
           {user.role === "owner" && (
             <Section title="Owner Tools" colors={colors}>
-              <MenuRow icon="bar-chart-2" label="Owner Dashboard" colors={colors} onPress={() => router.push("/owner")} />
+              <MenuRow
+                icon="bar-chart-2"
+                label="Owner Dashboard"
+                colors={colors}
+                onPress={() => router.push("/owner")}
+              />
+              {user.salonName ? (
+                <MenuRow icon="scissors" label="Salon Name" colors={colors} value={user.salonName} />
+              ) : null}
             </Section>
           )}
 
           {user.role === "admin" && (
             <Section title="Admin Tools" colors={colors}>
-              <MenuRow icon="shield" label="Admin Panel" colors={colors} onPress={() => router.push("/admin")} />
+              <MenuRow
+                icon="shield"
+                label="Admin Panel"
+                colors={colors}
+                onPress={() => router.push("/admin")}
+              />
+              {user.department ? (
+                <MenuRow icon="briefcase" label="Department" colors={colors} value={user.department} />
+              ) : null}
             </Section>
           )}
 
+          {/* ─── Account info ────────────────────────────────────────── */}
           <Section title="Account" colors={colors}>
-            <MenuRow icon="user" label="Personal Info" colors={colors} value={`${user.city}, ${user.state}`} />
-            <MenuRow icon="phone" label="Mobile Number" colors={colors} value={user.phone} />
-            <MenuRow icon="mail" label="Email" colors={colors} value={user.email} />
+            <InfoRow
+              icon="user"
+              label="Full Name"
+              value={user.name}
+              colors={colors}
+              onEdit={() => router.push("/edit-profile")}
+            />
+            <InfoRow
+              icon="phone"
+              label="Mobile Number"
+              value={user.phone}
+              colors={colors}
+              onEdit={() => router.push("/edit-profile")}
+            />
+            {user.whatsapp ? (
+              <InfoRow icon="message-circle" label="WhatsApp" value={user.whatsapp} colors={colors} onEdit={() => router.push("/edit-profile")} />
+            ) : null}
+            <InfoRow
+              icon="mail"
+              label="Email"
+              value={user.email}
+              colors={colors}
+            />
+            <InfoRow
+              icon="map-pin"
+              label="Location"
+              value={`${user.city}, ${user.state}`}
+              colors={colors}
+              onEdit={() => router.push("/edit-profile")}
+            />
+            {user.role === "customer" && user.gender ? (
+              <InfoRow icon="users" label="Gender" value={user.gender} colors={colors} onEdit={() => router.push("/edit-profile")} />
+            ) : null}
+            {user.role === "customer" && user.dob ? (
+              <InfoRow icon="calendar" label="Date of Birth" value={user.dob} colors={colors} onEdit={() => router.push("/edit-profile")} />
+            ) : null}
+            {user.role === "owner" && user.businessAddress ? (
+              <InfoRow icon="map" label="Business Address" value={user.businessAddress} colors={colors} onEdit={() => router.push("/edit-profile")} />
+            ) : null}
           </Section>
 
+          {/* ─── Edit profile card ───────────────────────────────────── */}
+          <Pressable
+            style={[styles.editProfileCard, { backgroundColor: "#111111" }]}
+            onPress={() => router.push("/edit-profile")}
+          >
+            <View style={styles.editProfileCardLeft}>
+              <View style={[styles.editProfileIcon, { backgroundColor: "#F5B041" + "20" }]}>
+                <Feather name="edit-3" size={20} color="#F5B041" />
+              </View>
+              <View>
+                <Text style={styles.editProfileCardTitle}>Edit Your Profile</Text>
+                <Text style={styles.editProfileCardSub}>
+                  Update name, phone, location
+                  {user.role === "owner" ? ", salon details" : ""}
+                  {user.role === "customer" ? ", gender, DOB" : ""}
+                  {user.role === "admin" ? ", department" : ""}
+                </Text>
+              </View>
+            </View>
+            <Feather name="chevron-right" size={18} color="#F5B041" />
+          </Pressable>
+
+          {/* ─── Quick access ────────────────────────────────────────── */}
           <Section title="Quick Access" colors={colors}>
-            <MenuRow icon="calendar" label="My Bookings" colors={colors} onPress={() => router.push("/(tabs)/bookings")} />
-            <MenuRow icon="map-pin" label="Find Salons" colors={colors} onPress={() => router.push("/(tabs)/salons")} />
+            <MenuRow
+              icon="calendar"
+              label="My Bookings"
+              colors={colors}
+              onPress={() => router.push("/(tabs)/bookings")}
+            />
+            <MenuRow
+              icon="map-pin"
+              label="Find Salons"
+              colors={colors}
+              onPress={() => router.push("/(tabs)/salons")}
+            />
+            <MenuRow
+              icon="map"
+              label="Salon Map"
+              colors={colors}
+              onPress={() => router.push("/(tabs)/map")}
+            />
           </Section>
 
+          {/* ─── Logout ──────────────────────────────────────────────── */}
           <Pressable
             style={[styles.logoutBtn, { borderColor: colors.destructive }]}
             onPress={handleLogout}
@@ -155,6 +266,8 @@ export default function ProfileScreen() {
     </View>
   );
 }
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
 
 function StatBlock({ value, label }: { value: string | number; label: string }) {
   return (
@@ -178,6 +291,39 @@ function Section({
     <View style={styles.section}>
       <Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>{title}</Text>
       <View style={[styles.sectionCard, { backgroundColor: colors.card }]}>{children}</View>
+    </View>
+  );
+}
+
+function InfoRow({
+  icon,
+  label,
+  value,
+  colors,
+  onEdit,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  colors: any;
+  onEdit?: () => void;
+}) {
+  return (
+    <View style={[styles.infoRow, { borderBottomColor: colors.border }]}>
+      <View style={[styles.menuIcon, { backgroundColor: colors.accent }]}>
+        <Feather name={icon as any} size={14} color={colors.primary} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.infoLabel, { color: colors.mutedForeground }]}>{label}</Text>
+        <Text style={[styles.infoValue, { color: colors.foreground }]} numberOfLines={2}>
+          {value}
+        </Text>
+      </View>
+      {onEdit ? (
+        <Pressable onPress={onEdit} hitSlop={8}>
+          <Feather name="edit-2" size={13} color={colors.mutedForeground} />
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -217,6 +363,8 @@ function MenuRow({
   );
 }
 
+// ─── Styles ──────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   root: { flex: 1 },
   center: { alignItems: "center", justifyContent: "center", padding: 30, gap: 16 },
@@ -228,11 +376,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 8,
   },
-  guestTitle: {
-    fontSize: 20,
-    fontFamily: "Inter_700Bold",
-    textAlign: "center",
-  },
+  guestTitle: { fontSize: 20, fontFamily: "Inter_700Bold", textAlign: "center" },
   guestText: {
     fontSize: 14,
     fontFamily: "Inter_400Regular",
@@ -249,11 +393,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
   },
-  authBtnText: {
-    fontSize: 15,
-    fontFamily: "Inter_700Bold",
-    color: "#F5B041",
-  },
+  authBtnText: { fontSize: 15, fontFamily: "Inter_700Bold", color: "#F5B041" },
   authBtnOutline: {
     borderWidth: 1.5,
     paddingHorizontal: 28,
@@ -262,53 +402,54 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  authBtnOutlineText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-  },
-  hero: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-  },
-  avatarRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    marginBottom: 20,
-  },
+  authBtnOutlineText: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
+
+  hero: { paddingHorizontal: 20, paddingBottom: 24 },
+  avatarRow: { flexDirection: "row", alignItems: "center", gap: 14, marginBottom: 14 },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarInitial: {
-    fontSize: 26,
-    fontFamily: "Inter_700Bold",
-    color: "#111111",
-  },
-  userName: {
-    fontSize: 19,
-    fontFamily: "Inter_700Bold",
-    color: "#FFFFFF",
-  },
+  avatarInitial: { fontSize: 26, fontFamily: "Inter_700Bold", color: "#111111" },
+  userName: { fontSize: 19, fontFamily: "Inter_700Bold", color: "#FFFFFF" },
   userEmail: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: "Inter_400Regular",
     color: "rgba(255,255,255,0.6)",
     marginTop: 2,
   },
   roleBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
     alignSelf: "flex-start",
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 12,
     marginTop: 5,
   },
-  roleText: {
-    fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
+  roleText: { fontSize: 10, fontFamily: "Inter_600SemiBold" },
+  editBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: "rgba(245,176,65,0.15)",
+    alignSelf: "flex-start",
+  },
+  editBtnText: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: "#F5B041" },
+  bio: {
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    color: "rgba(255,255,255,0.65)",
+    lineHeight: 18,
+    marginBottom: 14,
+    fontStyle: "italic",
   },
   statsRow: {
     flexDirection: "row",
@@ -316,33 +457,20 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 14,
   },
-  statBlock: {
-    flex: 1,
-    alignItems: "center",
-  },
-  statValue: {
-    fontSize: 18,
-    fontFamily: "Inter_700Bold",
-    color: "#F5B041",
-  },
+  statBlock: { flex: 1, alignItems: "center" },
+  statValue: { fontSize: 18, fontFamily: "Inter_700Bold", color: "#F5B041" },
   statLabel: {
     fontSize: 11,
     fontFamily: "Inter_400Regular",
     color: "rgba(255,255,255,0.6)",
     marginTop: 2,
   },
-  statDivider: {
-    width: 1,
-    marginVertical: 4,
-  },
-  content: {
-    padding: 16,
-  },
-  section: {
-    marginBottom: 20,
-  },
+  statDivider: { width: 1, marginVertical: 4 },
+
+  content: { padding: 16 },
+  section: { marginBottom: 20 },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "Inter_600SemiBold",
     textTransform: "uppercase",
     letterSpacing: 0.8,
@@ -358,6 +486,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: 14,
+    borderBottomWidth: 1,
+  },
+  infoLabel: { fontSize: 11, fontFamily: "Inter_400Regular", marginBottom: 2 },
+  infoValue: { fontSize: 14, fontFamily: "Inter_500Medium", lineHeight: 19 },
+
   menuRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -372,15 +510,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  menuLabel: {
-    fontSize: 14,
-    fontFamily: "Inter_500Medium",
+  menuLabel: { fontSize: 14, fontFamily: "Inter_500Medium" },
+  menuValue: { fontSize: 12, fontFamily: "Inter_400Regular", maxWidth: 120 },
+
+  editProfileCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 20,
   },
-  menuValue: {
+  editProfileCardLeft: { flexDirection: "row", alignItems: "center", gap: 12, flex: 1 },
+  editProfileIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  editProfileCardTitle: {
+    fontSize: 15,
+    fontFamily: "Inter_700Bold",
+    color: "#FFFFFF",
+    marginBottom: 2,
+  },
+  editProfileCardSub: {
     fontSize: 12,
     fontFamily: "Inter_400Regular",
-    maxWidth: 120,
+    color: "rgba(255,255,255,0.55)",
+    maxWidth: 200,
   },
+
   logoutBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -392,8 +553,5 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 8,
   },
-  logoutText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-  },
+  logoutText: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
 });
