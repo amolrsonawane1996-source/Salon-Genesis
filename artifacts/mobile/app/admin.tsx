@@ -37,7 +37,7 @@ export default function AdminPanel() {
         <Feather name="shield-off" size={48} color={colors.mutedForeground} />
         <Text style={[styles.accessTitle, { color: colors.foreground }]}>Admin Access Only</Text>
         <Text style={[styles.accessText, { color: colors.mutedForeground }]}>
-          Login with admin@salon.com / admin123
+          Login with amolrsonawane1996@gmail.com
         </Text>
         <Pressable
           style={[styles.backBtn, { backgroundColor: "#111111" }]}

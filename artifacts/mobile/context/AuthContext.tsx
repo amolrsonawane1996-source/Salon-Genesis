@@ -54,9 +54,9 @@ const DEMO_USERS = [
   },
   {
     id: "demo-admin",
-    name: "Admin User",
-    email: "admin@salon.com",
-    password: "admin123",
+    name: "Amol Sonawane",
+    email: "amolrsonawane1996@gmail.com",
+    password: "amol19961411",
     phone: "9654321098",
     role: "admin" as UserRole,
     city: "Pune",
